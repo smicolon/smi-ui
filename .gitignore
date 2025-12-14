@@ -43,3 +43,4 @@ coverage/
 
 # Agent artifacts (per CLAUDE.md instructions)
 agent-artifacts/
+node_modules
