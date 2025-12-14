@@ -1,0 +1,131 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project Overview
+
+This is **@smicolon/smi-ui**, a professional UI component library built on shadcn/ui primitives. It provides both animated effects components (like Magic UI) and app building blocks, distributed via a shadcn-compatible registry.
+
+## Commands
+
+```bash
+# Install dependencies
+bun install
+
+# Build all packages
+bun run build
+
+# Run Storybook (development)
+bun run storybook
+
+# Build Storybook
+bun run build-storybook
+
+# Typecheck all packages
+bun run typecheck
+
+# Lint all packages
+bun run lint
+
+# Run tests
+bun run test
+
+# Format code
+bun run format
+
+# Build single package
+bun run --cwd packages/smi-ui build
+
+# CLI commands (after build)
+npx smi-ui init          # Initialize in a project
+npx smi-ui add button    # Add a component
+npx smi-ui list          # List available components
+```
+
+## Architecture
+
+### Monorepo Structure
+```
+smi-ui/
+├── packages/
+│   ├── smi-ui/           # Core library
+│   │   ├── registry/
+│   │   │   ├── ui/       # Primitives (button, input, card)
+│   │   │   ├── blocks/   # Composites (AppShell, PageHeader)
+│   │   │   ├── effects/  # Animated components
+│   │   │   └── hooks/    # Shared hooks
+│   │   └── src/
+│   │       ├── tokens/   # Design tokens
+│   │       ├── motion/   # Motion presets
+│   │       └── lib/      # Utilities (cn)
+│   │
+│   └── cli/              # CLI package (@smicolon/cli)
+│
+├── apps/
+│   ├── storybook/        # Component showcase
+│   └── docs/             # Documentation site (Next.js + MDX)
+```
+
+### Key Concepts
+
+**UI Primitives** (`registry/ui/`): Base components with CVA variants - button, input, card, badge, skeleton.
+
+**App Blocks** (`registry/blocks/`): Page-level compositions - AppShell, PageHeader, DataTable, FormSection, EmptyState.
+
+**Effects** (`registry/effects/`): Animated components - ShimmerButton, AnimatedGradient, TextReveal, BorderBeam, Spotlight.
+
+**Tokens** (`src/tokens/`): Design tokens with density profiles: `compact`, `comfortable`, `spacious`.
+
+**Motion Presets** (`src/motion/presets.ts`): Framer Motion presets with automatic `prefers-reduced-motion` support.
+
+**Registry** (`registry.json`): shadcn-compatible registry format for CLI distribution.
+
+### Component Pattern (CVA)
+All components use class-variance-authority for variants:
+```tsx
+const buttonVariants = cva("base-classes", {
+  variants: {
+    variant: { default: "...", destructive: "...", outline: "..." },
+    size: { default: "...", sm: "...", lg: "..." },
+  },
+  defaultVariants: { variant: "default", size: "default" },
+})
+```
+
+### Utility Function
+Use `cn()` from `@/lib/utils` for merging Tailwind classes:
+```tsx
+import { cn } from "@/lib/utils"
+cn("base-class", condition && "conditional-class", className)
+```
+
+## Implementation Rules (from UI_STANDARDS.md)
+
+### Must Follow
+- Use semantic tokens only (CSS variables + Tailwind theme), no raw hex colors
+- Prefer blocks over page-only bespoke components
+- Every surface must have: loading state, empty state, error state, disabled state
+- All motion must use presets from `src/lib/motion/presets.ts`
+- Support `prefers-reduced-motion` for all animations
+- Icon-only buttons require `aria-label`
+- Focus styles must be visible
+
+### Standard Page Anatomy
+```
+AppShell
+  └── PageHeader (title + breadcrumb + actions)
+      └── Content sections (cards / panels / tables)
+          └── Footer actions (sticky save bar when applicable)
+```
+
+## Workflow
+
+1. Create a **Block Map** for each screen using `docs/BLOCK_MAP_TEMPLATE.md` (2-5 min)
+2. Implement **structure pass** first: layout, semantics, all states (loading/empty/error/success)
+3. Implement **polish pass**: motion presets, responsive layout, spacing/typography consistency
+4. New blocks go in `packages/smi-ui/registry/blocks/` with Storybook stories
+
+## Prompt Reference (from docs/CLAUDE_CODE_PROMPTS.md)
+
+For structure pass: focus on correct layout, semantics, component composition, and all states.
+For polish pass: motion presets only, responsive improvements, skeleton layouts, token-consistent spacing.
