@@ -76,45 +76,53 @@ const columns: Column<User>[] = [
 ]
 
 export const Default: Story = {
-  args: {
-    data: users,
-    columns,
-    getRowKey: (row) => row.id,
-  },
+  render: () => (
+    <DataTable
+      data={users}
+      columns={columns}
+      getRowKey={(row) => row.id}
+    />
+  ),
 }
 
 export const Loading: Story = {
-  args: {
-    data: [],
-    columns,
-    getRowKey: (row) => row.id,
-    loading: true,
-  },
+  render: () => (
+    <DataTable
+      data={[]}
+      columns={columns}
+      getRowKey={(row: User) => row.id}
+      loading
+    />
+  ),
 }
 
 export const Empty: Story = {
-  args: {
-    data: [],
-    columns,
-    getRowKey: (row) => row.id,
-    emptyState: (
-      <div className="text-center">
-        <p className="text-muted-foreground">No users found</p>
-        <button className="mt-2 text-sm text-primary hover:underline">
-          Add your first user
-        </button>
-      </div>
-    ),
-  },
+  render: () => (
+    <DataTable
+      data={[]}
+      columns={columns}
+      getRowKey={(row: User) => row.id}
+      emptyState={
+        <div className="text-center">
+          <p className="text-muted-foreground">No users found</p>
+          <button className="mt-2 text-sm text-primary hover:underline">
+            Add your first user
+          </button>
+        </div>
+      }
+    />
+  ),
 }
 
 export const Clickable: Story = {
-  args: {
-    data: users,
-    columns,
-    getRowKey: (row) => row.id,
-    onRowClick: (row) => alert(`Clicked: ${row.name}`),
-  },
+  render: () => (
+    <DataTable
+      data={users}
+      columns={columns}
+      getRowKey={(row) => row.id}
+      onRowClick={(row) => alert(`Clicked: ${row.name}`)}
+    />
+  ),
 }
 
 export const WithSelection: Story = {
@@ -133,13 +141,15 @@ export const WithSelection: Story = {
 }
 
 export const StickyHeader: Story = {
-  args: {
-    data: [...users, ...users, ...users],
-    columns,
-    getRowKey: (row) => row.id,
-    stickyHeader: true,
-    className: "max-h-[300px] overflow-auto",
-  },
+  render: () => (
+    <DataTable
+      data={[...users, ...users, ...users]}
+      columns={columns}
+      getRowKey={(row) => row.id}
+      stickyHeader
+      className="max-h-[300px] overflow-auto"
+    />
+  ),
 }
 
 export const WithPagination: Story = {
