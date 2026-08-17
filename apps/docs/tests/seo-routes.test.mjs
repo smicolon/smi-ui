@@ -98,12 +98,14 @@ describe("SEO route catalog", () => {
       import("../app/(home)/page"),
     ])
     const html = renderToStaticMarkup(React.createElement(HomePage))
-    const document = new DOMParser().parseFromString(html, "text/html")
     const homeRoute = routes.find((route) => route.path === "/")
+    const h1Text = html
+      .match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/)?.[1]
+      ?.replace(/<[^>]+>/g, "")
+      .replace(/\s+/g, " ")
+      .trim()
 
-    expect(document.querySelector("h1")?.textContent.replace(/\s+/g, " ").trim()).toBe(
-      homeRoute?.h1
-    )
+    expect(h1Text).toBe(homeRoute?.h1)
   })
 
   test("scopes homepage metadata below the root layout", () => {
