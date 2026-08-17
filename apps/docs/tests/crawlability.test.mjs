@@ -10,7 +10,10 @@ describe("static crawlability", () => {
       import("../app/sitemap"),
       import("../lib/seo-routes"),
     ])
-    const expectedUrls = routes.map((route) => new URL(route.path, SITE_URL).toString())
+    const expectedUrls = [
+      ...routes.map((route) => new URL(route.path, SITE_URL).toString()),
+      `${SITE_URL}/components/`,
+    ]
 
     expect(sitemap().map((entry) => entry.url).sort()).toEqual(expectedUrls.sort())
   })

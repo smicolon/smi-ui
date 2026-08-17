@@ -30,7 +30,7 @@ export const routes = [
     title: "SMI-UI React Component Library by Smicolon",
     description:
       "Build polished React interfaces with accessible SMI-UI components, application blocks, and motion effects for Tailwind CSS.",
-    h1: "The only UI library you need to build beautiful interfaces",
+    h1: "The only UI library you need to build beautiful",
   },
   {
     kind: "core",

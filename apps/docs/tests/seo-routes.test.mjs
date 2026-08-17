@@ -54,7 +54,7 @@ describe("SEO route catalog", () => {
   test("wires every route to the shared metadata catalog", async () => {
     const { componentRoutes } = await import("../lib/seo-routes")
     const coreAdapters = [
-      ["/", "app/layout.tsx"],
+      ["/", "app/(home)/layout.tsx"],
       ["/docs/", "app/docs/layout.tsx"],
       ["/docs/installation/", "app/docs/installation/page.tsx"],
     ]
@@ -77,7 +77,7 @@ describe("SEO route catalog", () => {
   test("keeps exactly one page-level H1 on every canonical docs route", async () => {
     const { componentRoutes } = await import("../lib/seo-routes")
     const pageFiles = [
-      "app/page.tsx",
+      "app/(home)/page.tsx",
       "app/docs/page.tsx",
       "app/docs/installation/page.tsx",
       ...componentRoutes.map((route) => {
@@ -90,6 +90,31 @@ describe("SEO route catalog", () => {
       const source = readFileSync(path.join(docsRoot, relativeFile), "utf8")
       expect(source.match(/<h1\b/g)?.length ?? 0).toBe(1)
     }
+  })
+
+  test("keeps the catalog H1 aligned with the rendered home heading", async () => {
+    const [{ routes }, { default: HomePage }] = await Promise.all([
+      import("../lib/seo-routes"),
+      import("../app/(home)/page"),
+    ])
+    const html = renderToStaticMarkup(React.createElement(HomePage))
+    const document = new DOMParser().parseFromString(html, "text/html")
+    const homeRoute = routes.find((route) => route.path === "/")
+
+    expect(document.querySelector("h1")?.textContent.replace(/\s+/g, " ").trim()).toBe(
+      homeRoute?.h1
+    )
+  })
+
+  test("scopes homepage metadata below the root layout", () => {
+    const rootLayout = readFileSync(path.join(docsRoot, "app/layout.tsx"), "utf8")
+    const homeLayout = readFileSync(
+      path.join(docsRoot, "app/(home)/layout.tsx"),
+      "utf8"
+    )
+
+    expect(rootLayout).not.toContain('metadataForRoute("/")')
+    expect(homeLayout).toContain('metadataForRoute("/")')
   })
 
   test("allows PageHeader previews to use a subordinate heading", async () => {
