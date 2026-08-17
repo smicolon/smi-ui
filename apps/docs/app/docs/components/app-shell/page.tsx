@@ -52,7 +52,7 @@ export default function AppShellPage() {
                     sidebar={<SidebarContent />}
                     header={<HeaderContent />}
                   >
-                    <h1 className="text-xl font-bold">Dashboard</h1>
+                    <h2 className="text-xl font-bold">Dashboard</h2>
                     <p className="mt-2 text-muted-foreground">Main content area</p>
                   </AppShell>
                 </div>
