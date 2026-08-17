@@ -1,6 +1,8 @@
 import { describe, expect, test } from "bun:test"
 import { readdirSync, readFileSync } from "node:fs"
 import path from "node:path"
+import React from "react"
+import { renderToStaticMarkup } from "react-dom/server"
 
 const docsRoot = path.resolve(import.meta.dir, "..")
 const componentsRoot = path.join(docsRoot, "app/docs/components")
@@ -88,5 +90,20 @@ describe("SEO route catalog", () => {
       const source = readFileSync(path.join(docsRoot, relativeFile), "utf8")
       expect(source.match(/<h1\b/g)?.length ?? 0).toBe(1)
     }
+  })
+
+  test("allows PageHeader previews to use a subordinate heading", async () => {
+    const { PageHeader } = await import(
+      "../../../packages/smi-ui/registry/blocks/page-header/PageHeader"
+    )
+    const html = renderToStaticMarkup(
+      React.createElement(PageHeader, {
+        title: "Preview heading",
+        headingLevel: 2,
+      })
+    )
+
+    expect(html).toContain("<h2")
+    expect(html).not.toContain("<h1")
   })
 })

@@ -12,6 +12,8 @@ export interface PageHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   breadcrumb?: React.ReactNode
   /** Whether to show the bottom border */
   bordered?: boolean
+  /** Semantic heading level for the title */
+  headingLevel?: 1 | 2 | 3
 }
 
 /**
@@ -24,9 +26,12 @@ export function PageHeader({
   actions,
   breadcrumb,
   bordered = true,
+  headingLevel = 1,
   className,
   ...props
 }: PageHeaderProps) {
+  const Heading = `h${headingLevel}` as const
+
   return (
     <div
       className={cn(
@@ -43,9 +48,9 @@ export function PageHeader({
               {breadcrumb}
             </nav>
           )}
-          <h1 className="truncate text-xl font-semibold tracking-tight md:text-2xl">
+          <Heading className="truncate text-xl font-semibold tracking-tight md:text-2xl">
             {title}
-          </h1>
+          </Heading>
           {description && (
             <p className="mt-1 text-sm text-muted-foreground">{description}</p>
           )}
